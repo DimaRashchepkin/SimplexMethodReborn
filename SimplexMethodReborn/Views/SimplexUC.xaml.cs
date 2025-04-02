@@ -82,7 +82,11 @@ namespace Simplex_method.Views
 					}
 					else
 					{
-						storage.Algo.GaussBasis(storage.StartTable.Restrictions, indexes);
+						if (!storage.Algo.GaussBasis(storage.StartTable.Restrictions, indexes))
+						{
+                            ResultLabel.Content = "Неподходящий базис";
+                            return;
+						}
 						storage.Algo.UpdateToMain(storage.StartTable.Function);
 						tableDone = true;
                     }
@@ -234,7 +238,7 @@ namespace Simplex_method.Views
             cellStrings.Clear();
             for (int i = 0; i < mainCells.Count; i++)
 			{
-				cellStrings.Add("(" + mainCells[i][0].ToString() + "; " + mainCells[i][1].ToString() + ")");
+				cellStrings.Add("(" + mainCells[i][1].ToString() + "; " + mainCells[i][0].ToString() + ")");
 			}
 			MainCellComboBox.SelectedIndex = 0;
         }
@@ -269,6 +273,7 @@ namespace Simplex_method.Views
 
 		private bool CheckEnd()
 		{
+			CountCornerPoint();
             int endCode = storage.Algo.IsItEnd();
             if (endCode != 0)
             {

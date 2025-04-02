@@ -35,7 +35,11 @@ namespace Utils
 			for (int i = 0; i < N; i++)
 			{
 				Table.Add(new Fraction[M]);
-			}
+                for (int j = 0; j < M; j++)
+                {
+                    Table[i][j] = 0;
+                }
+            }
 
 			for (int i = M - 1; i < N + M - 1; i++)
 			{
@@ -69,7 +73,7 @@ namespace Utils
 			Table.Add(buf);
 		}
 
-		public void GaussBasis(List<Fraction[]> rest, List<int> indexes)
+		public bool GaussBasis(List<Fraction[]> rest, List<int> indexes)
 		{
 			N = rest.Count;
 			M = rest[0].Length - N;
@@ -82,6 +86,10 @@ namespace Utils
 			for (int i = 0; i < N + 1; i++)
 			{
 				Table.Add(new Fraction[M]);
+				for (int j = 0; j < M; j++)
+				{
+					Table[i][j] = 0;
+				}
 			}
 
 			Basis = [.. indexes];
@@ -93,7 +101,18 @@ namespace Utils
 				}
 			}
 
-            List<Fraction[]> buf = Gauss.Count(N, rest[0].Length, rest, indexes);
+			List<Fraction[]> buf = [];
+
+            try
+			{
+				// buf = Gauss.Count(N, rest[0].Length, rest, indexes);
+                buf = GaussNew.Count(rest, indexes);
+            }
+			catch (DivideByZeroException)
+            {
+				return false;
+			}
+            
             int k;
 			for (int i = 0; i < buf.Count; i++)
 			{
@@ -102,11 +121,13 @@ namespace Utils
 				{
 					if (Free.Contains(j) || j == buf[i].Length - 1)
 					{
-						Table[i][k] = buf[i][j] / buf[i][Basis[i]];
+						Table[i][k] = buf[i][j];
 						k++;
 					}
 				}
 			}
+
+			return true;
 		}
 
 		public void NextStep(int mc, int mr, bool real)
