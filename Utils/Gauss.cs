@@ -8,14 +8,14 @@ namespace Utils
 {
     public class Gauss
     {
-        private static List<double[]> result = new List<double[]>();
+        private static List<Fraction[]> result = [];
 
-        public static List<double[]> Count(int n, int m, List<double[]> matrix, List<int> indexes)
+        public static List<Fraction[]> Count(int n, int m, List<Fraction[]> matrix, List<int> indexes)
         {
             result.Clear();
             for (int i = 0; i < n; i++)
             {
-                result.Add(new double[m]);
+                result.Add(new Fraction[m]);
                 for (int j = 0; j < m; j++)
                 {
                     result[i][j] = matrix[i][j];
@@ -26,7 +26,7 @@ namespace Utils
             {
                 for (int j = i + 1; j < indexes.Count; j++)
                 {
-                    double koef = result[j][indexes[i]] / result[i][indexes[i]];
+                    Fraction koef = result[j][indexes[i]] / result[i][indexes[i]];
                     SubtractLine(m, j, i, koef);
                 }
             }
@@ -35,7 +35,7 @@ namespace Utils
             {
                 for (int j = i - 1; j >= 0; j--)
                 {
-                    double koef = result[j][indexes[i]] / result[i][indexes[i]];
+                    Fraction koef = result[j][indexes[i]] / result[i][indexes[i]];
                     SubtractLine(m, j, i, koef);
                 }
             }
@@ -43,7 +43,7 @@ namespace Utils
             return result;
         }
 
-        private static void SubtractLine(int m, int k, int l, double koef)
+        private static void SubtractLine(int m, int k, int l, Fraction koef)
         {
             for (int i = 0; i < m; i++)
             {

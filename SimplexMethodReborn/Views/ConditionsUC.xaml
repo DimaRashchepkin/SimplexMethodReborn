@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="Symplex_method.Views.ConditionsUC"
+﻿<UserControl x:Class="Simplex_method.Views.ConditionsUC"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-			 xmlns:local="clr-namespace:Symplex_method.Views"
+			 xmlns:local="clr-namespace:Simplex_method.Views"
 			 xmlns:sys="clr-namespace:System;assembly=mscorlib"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="648" d:DesignWidth="1068" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
@@ -59,11 +59,5 @@
 		</ComboBox>
 		<Label Grid.Column="1" Content="Число переменных" HorizontalAlignment="Center" Margin="0,9,0,0" VerticalAlignment="Top" Width="248" Height="40" FontSize="18"/>
 		<Label Grid.Column="1" Content="Число ограничений" HorizontalAlignment="Center" Margin="0,120,0,0" VerticalAlignment="Top" Height="40" Width="248" FontSize="18"/>
-        <GroupBox Height="100" Header="Тип дробей" FontSize="18" Margin="10,224,10,228" Grid.Column="1">
-            <StackPanel Height="65">
-                <RadioButton Content="Десятичные" Margin="0,1,0,1" IsChecked="True"/>
-                <RadioButton Content="Обыкновенные" Margin="0,1,0,1"/>
-            </StackPanel>
-        </GroupBox>
     </Grid>
 </UserControl>

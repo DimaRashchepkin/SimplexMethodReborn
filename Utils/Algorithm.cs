@@ -9,21 +9,21 @@ namespace Utils
 {
 	public class Algorithm
 	{
-		public List<double[]> Table = new List<double[]>();
+		public List<Fraction[]> Table = [];
 
 		public int M; // количество переменных + 1 на столбец констант
 		public int N; // количество ограничений
 
-		public List<int> Basis = new List<int>(); //список базисных переменных
-		public List<int> Free = new List<int>(); // список свободных переменных
+		public List<int> Basis = []; //список базисных переменных
+		public List<int> Free = []; // список свободных переменных
 
-		private List<List<double[]>> memoryTable = new List<List<double[]>>();
-		private List<List<int>> memoryBasis = new List<List<int>>();
-		private List<List<int>> memoryFree = new List<List<int>>();
+		private List<List<Fraction[]>> memoryTable = [];
+		private List<List<int>> memoryBasis = [];
+		private List<List<int>> memoryFree = [];
 
 		public Algorithm() { }
 
-		public void SimulatedBasis(List<double[]> rest)
+		public void SimulatedBasis(List<Fraction[]> rest)
 		{
 			N = rest.Count;
 			M = rest[0].Length;
@@ -34,7 +34,7 @@ namespace Utils
 
 			for (int i = 0; i < N; i++)
 			{
-				Table.Add(new double[M]);
+				Table.Add(new Fraction[M]);
 			}
 
 			for (int i = M - 1; i < N + M - 1; i++)
@@ -55,12 +55,11 @@ namespace Utils
 				}
 			}
 
-			double[] buf = new double[M];
-			double res = 0;
-			for (int j = 0; j < M; j++)
+			Fraction[] buf = new Fraction[M];
+            for (int j = 0; j < M; j++)
 			{
-				res = 0;
-				for (int i = 0; i < N; i++)
+                Fraction res = 0;
+                for (int i = 0; i < N; i++)
 				{
 					res += Table[i][j];
 				}
@@ -70,23 +69,22 @@ namespace Utils
 			Table.Add(buf);
 		}
 
-		public void GaussBasis(List<double[]> rest, List<int> indexes)
+		public void GaussBasis(List<Fraction[]> rest, List<int> indexes)
 		{
 			N = rest.Count;
 			M = rest[0].Length - N;
-			List<double[]> buf = new List<double[]>();
 
-			Table.Clear();
+            Table.Clear();
 			Basis.Clear();
 			Free.Clear();
 			ClearMemory();
 			
 			for (int i = 0; i < N + 1; i++)
 			{
-				Table.Add(new double[M]);
+				Table.Add(new Fraction[M]);
 			}
 
-			Basis = indexes.ToList();
+			Basis = [.. indexes];
 			for (int i = 0; i < rest[0].Length - 1; i++)
 			{
 				if (!Basis.Contains(i))
@@ -95,8 +93,8 @@ namespace Utils
 				}
 			}
 
-			buf = Gauss.Count(N, rest[0].Length, rest, indexes);
-			int k;
+            List<Fraction[]> buf = Gauss.Count(N, rest[0].Length, rest, indexes);
+            int k;
 			for (int i = 0; i < buf.Count; i++)
 			{
 				k = 0;
@@ -113,16 +111,16 @@ namespace Utils
 
 		public void NextStep(int mc, int mr, bool real)
 		{
-			List<double[]> result = new List<double[]>();
+			List<Fraction[]> result = [];
 			for (int i = 0; i < Table.Count; i++)
 			{
-				result.Add(new double[Table[i].Length]);
+				result.Add(new Fraction[Table[i].Length]);
 			}
 			int buf;
 
-			memoryTable.Add(Table.ToList());
-			memoryBasis.Add(Basis.ToList());
-			memoryFree.Add(Free.ToList());
+			memoryTable.Add([.. Table]);
+			memoryBasis.Add([.. Basis]);
+			memoryFree.Add([.. Free]);
 
 			buf = Basis[mr];
 			Basis[mr] = Free[mc];
@@ -176,7 +174,7 @@ namespace Utils
 
 				for (int i = 0; i <= N; i++)
 				{
-					double[] newLine = new double[M - 1];
+					Fraction[] newLine = new Fraction[M - 1];
 					for (int j = 0; j < M; j++)
 					{
 						if (j < index)
@@ -198,23 +196,23 @@ namespace Utils
 
 		public void PreviousStep()
 		{
-			Table = memoryTable.Last().ToList();
+			Table = [.. memoryTable.Last()];
 			N = Table.Count - 1;
 			M = Table[0].Length;
 			memoryTable.RemoveAt(memoryTable.Count - 1);
 
-			Basis = memoryBasis.Last().ToList();
+			Basis = [.. memoryBasis.Last()];
 			memoryBasis.RemoveAt(memoryBasis.Count - 1);
 
-			Free = memoryFree.Last().ToList();
+			Free = [.. memoryFree.Last()];
 			memoryFree.RemoveAt(memoryFree.Count - 1);
 		}
 
-		public void UpdateToMain(double[] func)
+		public void UpdateToMain(Fraction[] func)
 		{
-			memoryTable.Add(Table.ToList());
-			memoryBasis.Add(Basis.ToList());
-			memoryFree.Add(Free.ToList());
+			memoryTable.Add([.. Table]);
+			memoryBasis.Add([.. Basis]);
+			memoryFree.Add([.. Free]);
 
 			foreach (int i in Basis)
 			{
@@ -235,9 +233,7 @@ namespace Utils
 		public int IsItEnd() // 1 - решение получено, 0 - решение не получено, -1 - решений нет
 		{
 			int flag = 1;
-			int buf = 0;
-
-			for (int j = 0; j < M - 1; j++)
+            for (int j = 0; j < M - 1; j++)
 			{
 				if (Table[N][j] < 0)
 				{
@@ -248,8 +244,8 @@ namespace Utils
 
 			if (flag == 0)
 			{
-				buf = 0;
-				for (int j = 0; j < M; j++)
+                int buf = 0;
+                for (int j = 0; j < M; j++)
 				{
 					if (Table[N][j] < 0)
 					{

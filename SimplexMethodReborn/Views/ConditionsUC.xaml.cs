@@ -15,15 +15,15 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Utils;
 
-namespace Symplex_method.Views
+namespace Simplex_method.Views
 {
 	public partial class ConditionsUC : UserControl
 	{
-		public Storage storage = new Storage();
+		public Storage storage = new();
 		private int I;
 		private int J;
-		private ObservableCollection<TableLine> function = new ObservableCollection<TableLine>();
-		private ObservableCollection<TableLine> restrictions = new ObservableCollection<TableLine>();
+		private ObservableCollection<TableLine> function = [];
+		private ObservableCollection<TableLine> restrictions = [];
 
 		public ConditionsUC()
 		{
@@ -32,24 +32,24 @@ namespace Symplex_method.Views
 
 		private void SaveButton_Click(object sender, RoutedEventArgs e)
 		{
-			double[] resFunc = new double[this.J];
-            double[] buf = function[0].GetTable();
+			Fraction[] resFunc = new Fraction[this.J];
+            Fraction[] buf = function[0].GetTable();
 			for (int i = 0; i < this.J - 1; i++)
 			{
 				resFunc[i] = buf[i];
 			}
-            resFunc[this.J - 1] = buf[buf.Length - 1];
+            resFunc[this.J - 1] = buf[^1];
 
-			List<double[]> resRest = new List<double[]>();
+			List<Fraction[]> resRest = [];
 			for (int i = 0; i < this.I - 1; i++)
 			{
-				resRest.Add(new double[this.J]);
+				resRest.Add(new Fraction[this.J]);
                 buf = restrictions[i].GetTable();
                 for (int j = 0; j < this.J - 1; j++)
                 {
                     resRest[i][j] = buf[j];
                 }
-                resRest[i][this.J - 1] = buf[buf.Length - 1];
+                resRest[i][this.J - 1] = buf[^1];
             }
 
 			storage.StartTable = new StartTable(this.I, this.J, resFunc, resRest);
@@ -120,9 +120,9 @@ namespace Symplex_method.Views
 			}
         }
 
-		private double [] GetLine(double[] table)
+		private Fraction [] GetLine(Fraction[] table)
 		{
-            double[] buf = new double[16];
+            Fraction[] buf = new Fraction[16];
 
             for (int i = 0; i < 15; i++)
             {
@@ -139,5 +139,5 @@ namespace Symplex_method.Views
 
 			return buf;
         }
-	}
+    }
 }

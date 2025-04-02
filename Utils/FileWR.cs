@@ -8,21 +8,16 @@ using System.Threading.Tasks;
 
 namespace Utils
 {
-	public class FileWR
-	{
-		private Storage Storage { get; set; } = new Storage();
-		private static StreamReader reader;
+	public class FileWR(Storage storage)
+    {
+        private Storage Storage { get; set; } = storage;
+        private static StreamReader reader;
 		private static StreamWriter writer;
 		public static int n, m;
-		public static double[] indexes;
-		public static List<double[]> matrix;
+		public static Fraction[] indexes = [];
+		public static List<Fraction[]> matrix = [];
 
-		public FileWR(Storage storage)
-		{
-			this.Storage = storage;
-		}
-
-		public bool Read()
+        public bool Read()
 		{
 			reader = new StreamReader(Storage.FilePath);
 			try
@@ -83,33 +78,33 @@ namespace Utils
 
 		private static void GetMatrix(StreamReader reader)
 		{
-			double[] buffer;
+			Fraction[] buffer;
 
-			buffer = GetDoubleLine(reader);
+			buffer = GetFractionLine(reader);
 			if (buffer.Length != 2)
 			{
 				throw new FormatException("Wrong format");
 			}
 			
-			n = Convert.ToInt16(buffer[0]);
-			m = Convert.ToInt16(buffer[1]);
+			n = buffer[0].Numerator;
+			m = buffer[1].Numerator;
 
-            indexes = GetDoubleLine(reader);
+            indexes = GetFractionLine(reader);
             if (indexes.Length != m)
             {
                 throw new FormatException("Wrong format: wrong indexes");
             }
 
-			matrix = new List<double[]>();
+			matrix = [];
 			for (int i = 0; i < n - 1; i++)
 			{
-                buffer = GetDoubleLine(reader);
+                buffer = GetFractionLine(reader);
                 if (buffer.Length != m)
                 {
                     throw new FormatException("Wrong indexes");
                 }
 
-				matrix.Add(new double[m]);
+				matrix.Add(new Fraction[m]);
                 for (int j = 0; j < m; j++)
 				{
 					matrix[i][j] = buffer[j];
@@ -117,25 +112,21 @@ namespace Utils
 			}
 		}
 
-		private static double[] GetDoubleLine(StreamReader reader)
+		private static Fraction[] GetFractionLine(StreamReader reader)
 		{
 			int i;
-			double buf;
-			double[] result;
-			string str = reader.ReadLine();
-			if (str == null)
-			{
-				throw new FormatException("Wrong format: str null");
-			}
-			str = str.Trim();
+			Fraction buf;
+			Fraction[] result;
+			string str = reader.ReadLine() ?? throw new FormatException("Wrong format: str null");
+            str = str.Trim();
 			string[] strs = str.Split(' ');
 
-			result = new double[strs.Length];
+			result = new Fraction[strs.Length];
 			for (i = 0; i < strs.Length; i++)
 			{
 				try
 				{
-					buf = Convert.ToDouble(strs[i]);
+					buf = Fraction.Parse(strs[i]);
 				}
 				catch (FormatException)
 				{

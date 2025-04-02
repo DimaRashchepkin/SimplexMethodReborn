@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using Symplex_method.Views;
+using Simplex_method.Views;
 using System;
 using System.Collections.Generic;
 using System.IO.Packaging;
@@ -16,17 +16,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Utils;
 
-namespace Symplex_method
+namespace Simplex_method
 {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
 	public partial class MainWindow : Window
 	{
         private readonly Storage storage;
         private readonly FileWR fileWR;
-        private readonly ConditionsUC conditionsUC = new ConditionsUC();
-        private readonly SymplexUC symplexUC = new SymplexUC();
+        private readonly ConditionsUC conditionsUC = new();
+        private readonly SimplexUC simplexUC = new();
 
         public MainWindow()
 		{
@@ -34,8 +31,8 @@ namespace Symplex_method
             storage = new Storage();
             fileWR = new FileWR(storage);
             conditionsUC.storage = storage;
-            symplexUC.storage = storage;
-            ConditionsButton_Click(null, null);
+            simplexUC.storage = storage;
+            ConditionsButton_Click(new(), new());
         }
 
 		private void ConditionsButton_Click(object sender, RoutedEventArgs e)
@@ -47,18 +44,18 @@ namespace Symplex_method
             conditionsUC.ShowTable();
         }
 
-		private void SymplexMethodButton_Click(object sender, RoutedEventArgs e)
+		private void SimplexMethodButton_Click(object sender, RoutedEventArgs e)
 		{
 			ConditionsButton.BorderBrush = SystemColors.InactiveBorderBrush;
 			SymplexMethodButton.BorderBrush = SystemColors.ActiveBorderBrush;
 
-            this.OutputView.Content = symplexUC;
-            // symplexUC.ShowTable();
+            this.OutputView.Content = simplexUC;
+            // simplexUC.ShowTable();
         }
 
         private void OpenMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            OpenFileDialog openFileDialog = new();
             if (openFileDialog.ShowDialog() == true)
             {
                 storage.FilePath = openFileDialog.FileName;
@@ -78,7 +75,7 @@ namespace Symplex_method
 
         private void SaveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            SaveFileDialog saveFileDialog = new();
             if (saveFileDialog.ShowDialog() == true)
             {
                 storage.FilePath = saveFileDialog.FileName;

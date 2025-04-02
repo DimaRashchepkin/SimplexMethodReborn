@@ -10,8 +10,8 @@ namespace Utils
     {
         public String FilePath { get; set; } = "";
         public StartTable StartTable { get; set; } = new StartTable();
-        public List<double[]> SymplexTable { get; set; } = new List<double[]>();
+        public List<Fraction[]> SimplexTable { get; set; } = [];
 
-        public Algorithm Algo = new Algorithm();
+        public Algorithm Algo = new();
     }
 }

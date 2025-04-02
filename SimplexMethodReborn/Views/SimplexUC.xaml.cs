@@ -16,15 +16,15 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Utils;
 
-namespace Symplex_method.Views
+namespace Simplex_method.Views
 {
-	public partial class SymplexUC : UserControl
+	public partial class SimplexUC : UserControl
 	{
-		public Storage storage = new Storage();
+		public Storage storage = new();
 		private int N;
 		private int M;
-		private ObservableCollection<TableLine> symplexTable = new ObservableCollection<TableLine>();
-        private ObservableCollection<VarName> basisTable = new ObservableCollection<VarName>();
+		private ObservableCollection<TableLine> simplexTable = [];
+        private ObservableCollection<VarName> basisTable = [];
         private bool tableDone = false; // false - вспомогательная задача
 		private bool readyToUpdate = false; // при нажатии обновления получим основную задачу с базисом, а не сбросим прогресс 
 		private bool isEnd = false;
@@ -32,9 +32,9 @@ namespace Symplex_method.Views
         private int mainRow;
 		private int mainCol;
 		private List<int[]> mainCells;
-		private ObservableCollection<string> cellStrings = new ObservableCollection<string>();
+		private ObservableCollection<string> cellStrings = [];
 
-        public SymplexUC()
+        public SimplexUC()
 		{
 			InitializeComponent();
             ForwardButton.IsEnabled = false;
@@ -48,7 +48,7 @@ namespace Symplex_method.Views
 			{
 				readyToUpdate = false;
 				storage.Algo.UpdateToMain(storage.StartTable.Function);
-				CheckEnd();
+                isEnd = CheckEnd();
 				counter = 0;
 				storage.Algo.ClearMemory();
                 BackButton.IsEnabled = false;
@@ -64,14 +64,14 @@ namespace Symplex_method.Views
                 else
                 {
 					int counter = 0;
-					List<int> indexes = new List<int>();
+					List<int> indexes = [];
 
 					foreach (CheckBox box in BasisListBox.Items)
 					{
 						if (box.IsChecked == true)
 						{
 							counter++;
-							indexes.Add(Convert.ToInt16(box.Content.ToString().Substring(1)) - 1);
+							indexes.Add(Convert.ToInt16(box.Content.ToString()[1..]) - 1);
 						}
 					}
 
@@ -93,25 +93,27 @@ namespace Symplex_method.Views
             SolveButton.IsEnabled = true;
             ResultLabel.Content = "";
             GetDataFromSymTable();
-			STableDataGrid.ItemsSource = symplexTable;
+			STableDataGrid.ItemsSource = simplexTable;
 			BasisDataGrid.ItemsSource = basisTable;
             HideExtraColumns();
 			MainCellComboBox.ItemsSource = cellStrings;
             mainCells = storage.Algo.FindMainRows(tableDone);
             EnableMainCells();
-            CheckEnd();
+            isEnd = CheckEnd();
         }
 
         private void GaussButton_Click(object sender, RoutedEventArgs e)
         {
-			ObservableCollection<CheckBox> basisButtons = new ObservableCollection<CheckBox>();
+			ObservableCollection<CheckBox> basisButtons = [];
             BasisListBox.IsEnabled = true;
 			BasisListBox.ItemsSource = basisButtons;
 			for (int i = 1; i < storage.StartTable.Function.Length; i++)
 			{
-				CheckBox x = new CheckBox();
-				x.Content = "X" + i.ToString();
-				basisButtons.Add(x);
+                CheckBox x = new()
+                {
+                    Content = "X" + i.ToString()
+                };
+                basisButtons.Add(x);
 			}
         }
 
@@ -179,10 +181,10 @@ namespace Symplex_method.Views
 			this.N = storage.Algo.N;
 			this.M = storage.Algo.M;
 			
-			symplexTable.Clear();
+			simplexTable.Clear();
 			for (int i = 0; i <= this.N; i++)
 			{
-				symplexTable.Add(new TableLine(GetLine(storage.Algo.Table[i])));
+				simplexTable.Add(new TableLine(GetLine(storage.Algo.Table[i])));
 			}
 
 			basisTable.Clear();
@@ -192,9 +194,9 @@ namespace Symplex_method.Views
 			}
 		}
 
-		private double[] GetLine(double[] table)
+		private Fraction[] GetLine(Fraction[] table)
 		{
-			double[] buf = new double[16];
+			Fraction[] buf = new Fraction[16];
 
 			for (int i = 0; i < 15; i++)
 			{
@@ -239,7 +241,7 @@ namespace Symplex_method.Views
 
 		private void CountCornerPoint()
 		{
-			List<double> result = new List<double>();
+			List<Fraction> result = [];
 			for (int i = 0; i < M + N - 1; i++) 
 			{
 				if (storage.Algo.Basis.Contains(i))
@@ -253,7 +255,7 @@ namespace Symplex_method.Views
 			}
 
 			CornerPointLabel.Content = "(";
-			foreach (double value in result)
+			foreach (Fraction value in result)
 			{
 				CornerPointLabel.Content += value.ToString() + "; ";
 			}
@@ -267,10 +269,10 @@ namespace Symplex_method.Views
 
 		private bool CheckEnd()
 		{
-            int isEnd = storage.Algo.IsItEnd();
-            if (isEnd != 0)
+            int endCode = storage.Algo.IsItEnd();
+            if (endCode != 0)
             {
-                if (isEnd == 1)
+                if (endCode == 1)
                 {
                     if (tableDone == false)
                     {
