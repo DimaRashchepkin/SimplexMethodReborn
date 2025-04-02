@@ -27,12 +27,12 @@ namespace Utils
 		{
 			N = rest.Count;
 			M = rest[0].Length;
-            Table.Clear();
-            Basis.Clear();
-            Free.Clear();
-            ClearMemory();
+			Table.Clear();
+			Basis.Clear();
+			Free.Clear();
+			ClearMemory();
 
-            for (int i = 0; i < N; i++)
+			for (int i = 0; i < N; i++)
 			{
 				Table.Add(new double[M]);
 			}
@@ -74,19 +74,19 @@ namespace Utils
 		{
 			N = rest.Count;
 			M = rest[0].Length - N;
-            List<double[]> buf = new List<double[]>();
+			List<double[]> buf = new List<double[]>();
 
-            Table.Clear();
+			Table.Clear();
 			Basis.Clear();
 			Free.Clear();
 			ClearMemory();
 			
-            for (int i = 0; i < N + 1; i++)
-            {
-                Table.Add(new double[M]);
-            }
+			for (int i = 0; i < N + 1; i++)
+			{
+				Table.Add(new double[M]);
+			}
 
-            Basis = indexes.ToList();
+			Basis = indexes.ToList();
 			for (int i = 0; i < rest[0].Length - 1; i++)
 			{
 				if (!Basis.Contains(i))
@@ -95,7 +95,7 @@ namespace Utils
 				}
 			}
 
-            buf = Gauss.Count(N, rest[0].Length, rest, indexes);
+			buf = Gauss.Count(N, rest[0].Length, rest, indexes);
 			int k;
 			for (int i = 0; i < buf.Count; i++)
 			{
@@ -109,7 +109,7 @@ namespace Utils
 					}
 				}
 			}
-        }
+		}
 
 		public void NextStep(int mc, int mr, bool real)
 		{
@@ -166,7 +166,7 @@ namespace Utils
 				int index = 0;
 				for (int i = 0; i < Free.Count; i++)
 				{
-					if (Free[i] >= M)
+					if (Free[i] >= M - 1)
 					{
 						index = i;
 						Free.RemoveAt(i);
@@ -203,20 +203,20 @@ namespace Utils
 			M = Table[0].Length;
 			memoryTable.RemoveAt(memoryTable.Count - 1);
 
-            Basis = memoryBasis.Last().ToList();
-            memoryBasis.RemoveAt(memoryBasis.Count - 1);
+			Basis = memoryBasis.Last().ToList();
+			memoryBasis.RemoveAt(memoryBasis.Count - 1);
 
-            Free = memoryFree.Last().ToList();
-            memoryFree.RemoveAt(memoryFree.Count - 1);
-        }
+			Free = memoryFree.Last().ToList();
+			memoryFree.RemoveAt(memoryFree.Count - 1);
+		}
 
 		public void UpdateToMain(double[] func)
 		{
-            memoryTable.Add(Table.ToList());
-            memoryBasis.Add(Basis.ToList());
-            memoryFree.Add(Free.ToList());
+			memoryTable.Add(Table.ToList());
+			memoryBasis.Add(Basis.ToList());
+			memoryFree.Add(Free.ToList());
 
-            foreach (int i in Basis)
+			foreach (int i in Basis)
 			{
 				foreach (int j in Free)
 				{
@@ -224,13 +224,13 @@ namespace Utils
 				}
 				Table[N][M - 1] += func[i] * Table[Basis.IndexOf(i)][M - 1];
 			}
-            foreach (int j in Free)
+			foreach (int j in Free)
 			{
 				Table[N][Free.IndexOf(j)] += func[j];
 			}
 			Table[N][M - 1] += func.Last();
 			Table[N][M - 1] *= -1;
-        }
+		}
 
 		public int IsItEnd() // 1 - решение получено, 0 - решение не получено, -1 - решений нет
 		{
@@ -275,7 +275,7 @@ namespace Utils
 
 		private List<int> FindMainCols()
 		{
-			List<int> cols = new List<int>();
+			List<int> cols = [];
 
 			for (int j = 0; j < M - 1; j++)
 				if (Table[N][j] < 0)
@@ -284,33 +284,64 @@ namespace Utils
 			return cols;
 		}
 
-		public List<int[]> FindMainRows()
+		public List<int[]> FindMainRows(bool real)
 		{
 			List<int> cols = FindMainCols();
-			List<int[]> result = new List<int[]>();
-			int mainRow = 0;
+			List<int[]> result = [];
+			int mainRow;
 
 			foreach (int col in cols)
 			{
-				mainRow = 0;
+				mainRow = -1;
 				for (int i = 0; i < N; i++)
 				{
-					if (Table[i][col] > 0)
+					if (!real)
 					{
-						mainRow = i;
-						break;
+						if (Basis[i] >= M - 1)
+						{
+							if (Table[i][col] > 0)
+							{
+								mainRow = i;
+								break;
+							}
+						}
 					}
+					else
+					{
+						if (Table[i][col] > 0)
+						{
+							mainRow = i;
+							break;
+						}
+					}
+				}
+				if (mainRow == -1)
+				{
+					return result;
 				}
 
 				for (int i = mainRow + 1; i < N; i++)
 				{
-					if ((Table[i][col] > 0) && ((Table[i][M - 1] / Table[i][col]) < (Table[mainRow][M - 1] / Table[mainRow][col])))
+					if (!real)
 					{
-						mainRow = i;
+						if (Basis[i] >= M - 1)
+						{
+							if ((Table[i][col] > 0) && ((Table[i][M - 1] / Table[i][col]) < (Table[mainRow][M - 1] / Table[mainRow][col])))
+							{
+								mainRow = i;
+							}
+						}
+					}
+					else
+					{
+						if ((Table[i][col] > 0) && ((Table[i][M - 1] / Table[i][col]) < (Table[mainRow][M - 1] / Table[mainRow][col])))
+						{
+							mainRow = i;
+						}
 					}
 				}
 
-				result.Add(new int[] { col, mainRow });
+				result.Add([col, mainRow]);
 			}
 
 			return result;

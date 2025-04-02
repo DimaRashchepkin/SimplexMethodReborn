@@ -97,7 +97,7 @@ namespace Symplex_method.Views
 			BasisDataGrid.ItemsSource = basisTable;
             HideExtraColumns();
 			MainCellComboBox.ItemsSource = cellStrings;
-            mainCells = storage.Algo.FindMainRows();
+            mainCells = storage.Algo.FindMainRows(tableDone);
             EnableMainCells();
             CheckEnd();
         }
@@ -137,7 +137,7 @@ namespace Symplex_method.Views
             GetDataFromSymTable();
             HideExtraColumns();
 
-            mainCells = storage.Algo.FindMainRows();
+            mainCells = storage.Algo.FindMainRows(tableDone);
 			EnableMainCells();
 			isEnd = CheckEnd();
 
@@ -170,7 +170,7 @@ namespace Symplex_method.Views
             GetDataFromSymTable();
             HideExtraColumns();
 
-            mainCells = storage.Algo.FindMainRows();
+            mainCells = storage.Algo.FindMainRows(tableDone);
             EnableMainCells();
         }
 
